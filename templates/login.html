@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block header %}<h2>Signup</h2>{% endblock %}
+{% block content %}
+    <form method="post" action="/account/login">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" class="form-control" id="username" name="username" value="{{ username }}">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input class="form-control" type="password" name="password" id="password" value=""></td>
+                </div>
+                <p>{{ error_login }}</p>
+                <button type="submit" class="btn btn-default">Login</button>
+            </tr>
+    </form>
+{% endblock %}

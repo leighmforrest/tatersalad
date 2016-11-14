@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+    {% for post in posts %}
+    <div class="blog-post">
+            <a href="{{ post.get_absolute_url() }}"><h2 class="blog-post-title">{{ post.subject }}</h2></a>
+            <p class="blog-post-meta">January 1, 2014 by <a href="#">{{ post.author.username }}</a></p>
+        {{ post.html_text() | safe }}
+    </div>
+    {% endfor %}
+
+{% endblock%}

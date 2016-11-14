@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="blog-post">
+            <h2 class="blog-post-title">{{ post.subject }}</h2>
+            <p class="blog-post-meta">{{ post.created }} by <a href="#">{{ post.author.username }}</a></p>
+    {{ post.html_text() | safe }}
+    </div>
+    <div class="blog-post">
+        <ul class="list-group">
+        {% for comment in post.comments %}
+            <li class="list-group-item"><strong>{{ comment.author.username }}</strong>
+            <p>{{ comment.content }}</p>
+            <small>{{ comment.created }}</small>
+            </li>
+        {% endfor %}
+        </ul>
+    </div>
+{% if user %}
+    <div class="blog-post">
+        <form  method="post" action="{{post.get_absolute_url()}}/comment">
+            <div class="form-group">
+                <label class="sr-only" for="content">Comment</label>
+                <textarea class="form-control" name="content" value="content" rows="5">{{ content }}</textarea>
+            </div>
+            <button type="submit" class="btn btn-default">Comment</button>
+        </form>
+    </div>
+{% else %}
+    <div class="blog-post">
+        <p>Want to comment? Then <a href="/account/login">Log In!</a></p>
+    </div>
+{% endif %}
+{% endblock%}

@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+    <form method="post">
+        {% if post %}<input type="hidden" value="{{post.key().id() }}" name="post_id">{% endif%}
+        <div class="form-group">
+            <label for="subject">Subject</label>
+            <input class="form-control" type="text" name="subject" value="{{subject}}">
+        </div>
+        <div class="form-group">
+            <label for="content">Content</label>
+            <textarea class="form-control" name="content" value="content" rows="15">{{ content }}</textarea>
+        </div>
+        <button type="submit" class="btn btn-default">Post</button>
+        <p class="error">{{error}}</p>
+    </form>
+{% endblock content %}
