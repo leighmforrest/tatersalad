@@ -1,3 +1,10 @@
 {% extends "base.html" %}
 {% block content %}Welcome, {{ user.username }}!
+{% for post in user.posts %}
+    <p><a href="{{post.get_absolute_url()}}">{{ post.subject }}</a><a href="{{ post.get_absolute_url()}}/update">
+          <span class="glyphicon glyphicon-edit">Edit</span>
+        </a><a href="#">
+          <span class="glyphicon glyphicon-trash">Delete</span>
+        </a></p>
+{% endfor %}
 {% endblock %}
