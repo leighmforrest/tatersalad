@@ -1,20 +1,20 @@
 a {
-    color: #C56D79;
+    color: #c56d79;
 }
 
 .blog-main {
     margin-bottom: 25px;
 }
 
-.delete {
+.delete, .like {
     display: inline;
 }
-.delete > button {
+.delete > button, .like > button {
      background:none!important;
      border:none;
      padding:0!important;
      font: inherit;
-     color: #C56D79;
+     color: #c56d79;
      cursor: pointer;
 }
 

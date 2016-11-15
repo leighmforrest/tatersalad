@@ -3,6 +3,11 @@
     <div class="blog-post">
         <h2 class="blog-post-title">{{ post.subject }}</h2>
         <p class="blog-post-meta">{{ post.created.strftime('%B %-d, %Y') }} by {{ post.author.username }}</p>
+        <p><span class="counts">{{likes.count()}} Likes</span>
+        {% if post and  not post.author.key().id() == user.key().id()%}
+            <form method="post" class="like" action="/{{ post.key().id()}}/like"><button>Like</button></form>
+        {% endif %}
+        </p>
         {{ post.html_text() | safe }}
     </div>
     <div class="blog-post">

@@ -69,12 +69,15 @@ class NewPostPage(Handler):
 class ShowPostPage(Handler):
     def get(self, post_id):
         post = Post.get_by_id(int(post_id))
-        liked = Like.liked_by_user(post_id, self.user.key().id())
         # If not post, 404
         if not post:
             self.error(404)
-        self.render('show_post.html', post=post, user=self.user,
-                    likes=post.likes, liked=liked)
+        # TODO: If user already liked post, set liked to True
+        self.render('show_post.html',
+                    post=post,
+                    user=self.user,
+                    likes=post.likes,
+                    )
 
 
 class UpdatePostPage(Handler):
@@ -251,11 +254,24 @@ class DeletePostHandler(Handler):
         self.redirect('/account')
 
 
+class LikeHandler(Handler):
+    def post(self, post_id):
+        post = Post.get_by_id(int(post_id))
+        if post and post.author.key().id() == self.user.key().id():
+            self.error(404)
+        else:
+            like = Like(post=post, user=self.user)
+            like.put()
+            time.sleep(1)
+            self.redirect('/{}'.format(post_id))
+
+
 app = webapp2.WSGIApplication(
     [('/', MainPage),
      ('/new_post', NewPostPage),
      ('/([0-9]+)', ShowPostPage),
      ('/([0-9]+)/comment', CommentHandler),
+     ('/([0-9]+)/like', LikeHandler),
      ('/([0-9]+)/update', UpdatePostPage),
      ('/account/signup', SignupPage),
      ('/account', AccountPage),

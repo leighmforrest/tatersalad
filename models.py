@@ -116,3 +116,19 @@ class Comment(DateTimeModel):
             return True
         else:
             return False
+
+
+class Like(DateTimeModel):
+    """Models a like. Holds references to user and post."""
+    user = db.ReferenceProperty(User,
+                                required=True,
+                                collection_name='likes')
+    post = db.ReferenceProperty(Post,
+                                required=True,
+                                collection_name='likes')
+
+    @classmethod
+    def by_post_id(cls, post_id):
+        """Get number of likes for a post id"""
+        likes = Like.all().filter('post =', post_id)
+        return likes.count()
