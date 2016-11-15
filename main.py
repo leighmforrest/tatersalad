@@ -57,7 +57,7 @@ class NewPostPage(Handler):
 
         if subject and content:
             post = Post.create_post(subject, content, author)
-            time.sleep(1)
+            time.sleep(2)
             self.redirect('/{}'.format(post))
 
         else:
@@ -96,7 +96,6 @@ class UpdatePostPage(Handler):
         if subject and content:
             if Post.is_owner(self.user, post_id):
                 post = Post.update_post(subject, content, post_id)
-                time.sleep(1)
                 self.redirect('/{}'.format(post))
             else:
                 error = "Author an user are not the same."
