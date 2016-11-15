@@ -1,14 +1,15 @@
 from google.appengine.ext import db
 
-from security import make_pwd_hash, valid_pw
-
 
 class DateTimeModel(db.Model):
+    """Instantiates with created and updated times. All models in the app will
+    descend from DateTimeModel."""
     created = db.DateTimeProperty(auto_now_add=True)
     last_modified = db.DateTimeProperty(auto_now=True)
 
 
 class User(DateTimeModel):
+    """Models a user."""
     username = db.StringProperty(required=True)
     password = db.StringProperty(required=True)
 
@@ -17,24 +18,22 @@ class User(DateTimeModel):
         """Method to add a user. Passwords are assumed to be hashed."""
         user = User(username=username, password=hashed_password)
         user.put()
+
         return user.key().id()
 
     @classmethod
     def get_user_by_id(cls, uid):
+        """Get a user by his/her id."""
         return User.get_by_id(int(uid))
 
     @classmethod
     def user_exists(cls, username):
+        """Returns true if user exists in the system."""
         user = User.gql("WHERE username = '%s'" % username).get()
         if user:
             return True
         else:
             return False
-
-
-class Profile(DateTimeModel):
-    name = db.StringProperty(required=True)
-    tagline = db.StringProperty()
 
 
 class Post(DateTimeModel):
@@ -79,7 +78,7 @@ class Post(DateTimeModel):
     def delete_post(cls, post_id):
         post = Post.get_by_id(int(post_id))
         if post:
-            post.key.delete()
+            post.delete()
             return True
         else:
             return False
@@ -99,16 +98,21 @@ class Comment(DateTimeModel):
         post = Post.get_by_id(int(post_id))
         comment = Comment(post=post, content=content, author=author)
         comment.put()
-        print "Comment: {}".format(comment.content)
         return comment.key().id()
 
-
-class Like(DateTimeModel):
-    post = db.ReferenceProperty(Post, required=True)
-    user = db.ReferenceProperty(User, required=True)
+    @classmethod
+    def update_comment(cls, comment_id, content):
+        comment = Comment.get_by_id(int(comment_id))
+        if comment:
+            comment.content = content
+            comment.put()
+            return comment.key().id()
 
     @classmethod
-    def likes_by_post(cls, post_id):
-        likes = Like.all().filter(
-            'post=', post_id)
-        return likes.count()
+    def delete_comment(cls, comment_id):
+        comment = Comment.get_by_id(int(comment_id))
+        if comment:
+            comment.delete()
+            return True
+        else:
+            return False

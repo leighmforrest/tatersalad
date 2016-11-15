@@ -1,10 +1,22 @@
 {% extends "base.html" %}
-{% block content %}Welcome, {{ user.username }}!
-{% for post in user.posts %}
-    <p><a href="{{post.get_absolute_url()}}">{{ post.subject }}</a><a href="{{ post.get_absolute_url()}}/update">
-          <span class="glyphicon glyphicon-edit">Edit</span>
-        </a><a href="#">
-          <span class="glyphicon glyphicon-trash">Delete</span>
-        </a></p>
-{% endfor %}
+{% block content %}
+    <h2 class="blog-post-title">Welcome, {{ user.username }}!</h2>
+    <br>
+    <!-- TODO: Profile form -->
+    <!-- Post list item -->
+    <ul class="list-group">
+        {% for post in user.posts %}
+            <li class="list-group-item">
+                <a href="{{post.get_absolute_url()}}">{{ post.subject }}</a>
+                <span class="float-md-left">
+                    <a href="{{ post.get_absolute_url()}}/update">
+                        <span class="glyphicon glyphicon-edit">Edit</span>
+                    </a>
+                    <form class="delete" method="post" action="{{post.get_absolute_url()}}/delete">
+                        <button><span class="glyphicon glyphicon-trash">Delete</span></button>
+                    </form>
+                </span>
+            </li>
+        {% endfor %}
+    </ul>
 {% endblock %}

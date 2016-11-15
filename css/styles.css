@@ -1,3 +1,24 @@
+a {
+    color: #C56D79;
+}
+
 .blog-main {
     margin-bottom: 25px;
 }
+
+.delete {
+    display: inline;
+}
+.delete > button {
+     background:none!important;
+     border:none;
+     padding:0!important;
+     font: inherit;
+     color: #C56D79;
+     cursor: pointer;
+}
+
+.profile {
+    margin-bottom: 25px;
+}
+

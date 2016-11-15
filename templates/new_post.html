@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
 {% block content %}
     <form method="post">
-        {% if post %}<input type="hidden" value="{{post.key().id() }}" name="post_id">{% endif%}
+        {% if post %}
+        <input type="hidden" value="{{post.key().id() }}" name="post_id">{% endif%}
         <div class="form-group">
             <label for="subject">Subject</label>
             <input class="form-control" type="text" name="subject" value="{{subject}}">

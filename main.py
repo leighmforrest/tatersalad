@@ -5,7 +5,7 @@ import jinja2
 import webapp2
 from google.appengine.ext import db
 
-from models import Post, User, Comment
+from models import Post, User, Comment, Like
 from security import (valid_username, valid_password, valid_email,
                       make_secure_val, check_secure_val, make_pwd_hash,
                       valid_pw)
@@ -69,10 +69,12 @@ class NewPostPage(Handler):
 class ShowPostPage(Handler):
     def get(self, post_id):
         post = Post.get_by_id(int(post_id))
+        liked = Like.liked_by_user(post_id, self.user.key().id())
         # If not post, 404
         if not post:
             self.error(404)
-        self.render('show_post.html', post=post, user=self.user)
+        self.render('show_post.html', post=post, user=self.user,
+                    likes=post.likes, liked=liked)
 
 
 class UpdatePostPage(Handler):
@@ -80,6 +82,7 @@ class UpdatePostPage(Handler):
         post = Post.get_by_id(int(post_id))
         if not post and post.author == self.user:
             self.error(404)
+
         self.render('new_post.html',
                     post=post, subject=post.subject, content=post.content)
 
@@ -152,7 +155,7 @@ class SignupPage(Handler):
                 # set the cookie
                 self.set_secure_cookie('uid', str(uid))
                 # redirect
-                self.redirect('/')
+                self.redirect('/account')
 
 
 class AccountPage(Handler):
@@ -187,7 +190,7 @@ class LogoutHandler(Handler):
     """Handles login. Note: there is no temlate."""
     def get(self):
         self.response.delete_cookie('uid')
-        self.redirect('/account/login')
+        self.redirect('/')
 
 
 class CommentHandler(Handler):
@@ -200,7 +203,52 @@ class CommentHandler(Handler):
             self.error(404)
         else:
             Comment.create_comment(post_id, content, author)
+            time.sleep(1)
             self.redirect(post.get_absolute_url())
+
+
+class UpdateCommentPage(Handler):
+    def get(self, comment_id):
+        comment = Comment.get_by_id(int(comment_id))
+        post = comment.post
+
+        if not self.user.key().id() == comment.author.key().id():
+            self.error(404)
+        else:
+            self.render('edit_comment_post.html', comment=comment, post=post)
+
+    def post(self, comment_id):
+        comment = Comment.get_by_id(int(comment_id))
+        content = self.request.get("content")
+        if not comment and comment.author == self.user:
+            self.error(404)
+        else:
+            Comment.update_comment(comment_id, content)
+            time.sleep(1)
+            self.redirect(comment.post.get_absolute_url())
+
+
+class DeleteCommentHandler(Handler):
+    def post(self, comment_id):
+        comment = Comment.get_by_id(int(comment_id))
+        post = comment.post
+        if not comment and comment.author == self.user:
+            self.error(404)
+        if Comment.delete_comment(comment_id):
+            time.sleep(1)
+            self.redirect('/{}'.format(post.key().id()))
+        else:
+            self.error(404)
+
+
+class DeletePostHandler(Handler):
+    def post(self, post_id):
+        post = Post.get_by_id(int(post_id))
+        if not post and post.author == self.user:
+            self.error(404)
+        post.delete()
+        time.sleep(1)
+        self.redirect('/account')
 
 
 app = webapp2.WSGIApplication(
@@ -213,5 +261,8 @@ app = webapp2.WSGIApplication(
      ('/account', AccountPage),
      ('/account/login', LoginPage),
      ('/account/logout', LogoutHandler),
+     ('/([0-9]+)/delete', DeletePostHandler),
+     ('/comment/([0-9]+)', UpdateCommentPage),
+     ('/comment/([0-9]+)/delete', DeleteCommentHandler),
      ],
     debug=True)
