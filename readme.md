@@ -1,9 +1,10 @@
-***TaterSalad***
+#TaterSalad#
 
-**Multi-User Journal Dimension**
+###Multi-User Journal Dimension###
 by [Leigh Michael Forrest](http:leighmforrest.github.io/portfolio)
 
-**Installing TaterSalad**
+---
+##Installing TaterSalad##
 
 To install, clone the git repository with the folowing command:  `git clone https://github.com/leighmforrest/tatersalad.git`. In addition, the Google App Engine SDK must be installed. See [Google Cloud Platform](https://cloud.google.com/appengine/docs/python/download) for details.
 
