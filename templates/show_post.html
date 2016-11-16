@@ -3,32 +3,34 @@
     <div class="blog-post">
         <h2 class="blog-post-title">{{ post.subject }}</h2>
         <p class="blog-post-meta">{{ post.created.strftime('%B %-d, %Y') }} by {{ post.author.username }}</p>
-        <p><span class="counts">{{likes.count()}} Likes</span>
-        {% if post and  not post.author.key().id() == user.key().id()%}
+        <p><span class="counts">{{post.likes.count()}} Likes</span>
+            {%  if post and  user and not post.author.key().id() == user.key().id() %}
             <form method="post" class="like" action="/{{ post.key().id()}}/like"><button>Like</button></form>
-        {% endif %}
+            {% endif %}
         </p>
         {{ post.html_text() | safe }}
     </div>
+    {% if post.comments.count > 0 %}
     <div class="blog-post">
         <ul class="list-group">
-            {% for comment in comments %}
+            {% for comment in post.comments %}
             <li class="list-group-item"><strong>{{ comment.author.username }}</strong>
                 <p>{{ comment.content }}</p>
                 <small>{{ comment.created.strftime('%B %-d, %Y')}}</small>
                 <span class="links">
-                    {% if user.key().id() == comment.author.key().id() %}
-                    <a href="/comment/{{comment.key().id() }}"<span class="glyphicon glyphicon-edit">Edit</span></a>
-                <form class="delete" method="post" action="/comment/{{comment.key().id() }}/delete">
-                    <button><span class="glyphicon glyphicon-trash">Delete</span></button>
-                </form>
-                {% endif%}
+                    {% if user and user.key().id() == comment.author.key().id() %}
+                        <a href="/comment/{{comment.key().id() }}/update"<span class="glyphicon glyphicon-edit">Edit</span></a>
+                        <form class="delete" method="post" action="/comment/{{comment.key().id() }}/delete">
+                            <button><span class="glyphicon glyphicon-trash">Delete</span></button>
+                        </form>
+                    {% endif%}
                 </span>
             </li>
             {% endfor %}
         </ul>
     </div>
-    {% if user %}
+    {% endif %}
+    {% if user%}
     <div class="blog-post">
         <form method="post" action="{{post.get_absolute_url()}}/comment">
             {% if post %}
@@ -37,6 +39,7 @@
                 <label class="sr-only" for="content">Comment</label>
                 <textarea class="form-control" name="content" value="content" rows="5">{{ content }}</textarea>
             </div>
+            <p>{{ error }}</p>
             <button type="submit" class="btn btn-default">Comment</button>
         </form>
     </div>

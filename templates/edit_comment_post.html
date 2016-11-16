@@ -12,17 +12,18 @@
             <small>{{ comment.created.strftime('%B %-d, %Y')}}</small>
             </li>
         {% endfor %}
-        </ul>
+        </ul>'/comment/([0-9]+)/update'
     </div-->
 {% if user %}
     <div class="blog-post">
-        <form method="post" action="{{post.get_absolute_url()}}/comment">
+        <form method="post" action="/comment/{{comment.key().id()}}/update">
             {% if post %}
-            <input type="hidden" value="{{post.key().id() }}" name="post_id">{% endif%}
+            <input type="hidden" value="{{comment.key().id() }}" name="comment_id">{% endif%}
             <div class="form-group">
                 <label class="sr-only" for="content">Comment</label>
                 <textarea class="form-control" name="content" value="content" rows="5">{{ comment.content }}</textarea>
             </div>
+            <p class="error">{{error}}</p>
             <button type="submit" class="btn btn-default">Comment</button>
         </form>
     </div>

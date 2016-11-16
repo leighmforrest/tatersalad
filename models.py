@@ -62,6 +62,7 @@ class Post(DateTimeModel):
 
     @classmethod
     def update_post(cls, subject, content, post_id):
+        """Update a post."""
         post = Post.get_by_id(int(post_id))
         if post:
             post.subject = subject
@@ -71,11 +72,13 @@ class Post(DateTimeModel):
 
     @classmethod
     def is_owner(cls, user, post_id):
+        """Return True if a user is a post's owner."""
         post = Post.get_by_id(int(post_id))
         return user.key().id() == post.author.key().id()
 
     @classmethod
     def delete_post(cls, post_id):
+        """Remove a post. Returns True if delete was successful; False if not."""
         post = Post.get_by_id(int(post_id))
         if post:
             post.delete()
@@ -85,6 +88,7 @@ class Post(DateTimeModel):
 
 
 class Comment(DateTimeModel):
+    """Models a comment post. Has two foreign keys: post and author."""
     content = db.TextProperty(required=True)
     post = db.ReferenceProperty(Post, required=True,
                                 collection_name='comments')
@@ -102,6 +106,7 @@ class Comment(DateTimeModel):
 
     @classmethod
     def update_comment(cls, comment_id, content):
+        """Update a comment."""
         comment = Comment.get_by_id(int(comment_id))
         if comment:
             comment.content = content
@@ -110,6 +115,7 @@ class Comment(DateTimeModel):
 
     @classmethod
     def delete_comment(cls, comment_id):
+        """Remove a comment."""
         comment = Comment.get_by_id(int(comment_id))
         if comment:
             comment.delete()

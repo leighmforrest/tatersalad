@@ -14,14 +14,17 @@ EMAIL_RE = re.compile(r"^[\S]+@[\S]+.[\S]+$")
 
 
 def valid_username(username):
+    """Checks for a valid username. Uses a regular expression."""
     return username and USER_RE.match(username)
 
 
 def valid_password(password):
+    """Checks for a valid password. Uses a regular expression."""
     return password and PASS_RE.match(password)
 
 
 def valid_email(email):
+    """Checks for a valid email address."""
     return not email or EMAIL_RE.match(email)
 
 
