@@ -57,7 +57,6 @@ class NewPostPage(Handler):
 
         if subject and content:
             post = Post.create_post(subject, content, author)
-            time.sleep(2)
             self.redirect('/{}'.format(post))
 
         else:
@@ -69,6 +68,7 @@ class NewPostPage(Handler):
 class ShowPostPage(Handler):
     def get(self, post_id):
         post = Post.get_by_id(int(post_id))
+        comments = post.comments.order('-created')
         # If not post, 404
         if not post:
             self.error(404)
@@ -76,6 +76,7 @@ class ShowPostPage(Handler):
         self.render('show_post.html',
                     post=post,
                     user=self.user,
+                    comments=comments,
                     likes=post.likes,
                     )
 

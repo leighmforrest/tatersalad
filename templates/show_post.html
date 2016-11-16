@@ -12,7 +12,7 @@
     </div>
     <div class="blog-post">
         <ul class="list-group">
-            {% for comment in post.comments.order('-created') %}
+            {% for comment in comments %}
             <li class="list-group-item"><strong>{{ comment.author.username }}</strong>
                 <p>{{ comment.content }}</p>
                 <small>{{ comment.created.strftime('%B %-d, %Y')}}</small>
