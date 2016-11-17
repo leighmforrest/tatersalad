@@ -258,7 +258,7 @@ class DeleteCommentHandler(Handler):
     def post(self, comment_id):
         comment = Comment.get_by_id(int(comment_id))
         post = comment.post
-        if comment and comment.author == self.user:
+        if comment and comment.author.key().id() == self.user.key().id():
             if Comment.delete_comment(comment_id):
                 # time.sleep(1) comment time.sleep in production
                 self.redirect('/{}'.format(post.key().id()))
