@@ -76,7 +76,7 @@ class ShowPostPage(Handler):
         comments = post.comments.order('-created')
         # If not post, 404
         if not post:
-            self.error(404)
+            return self.error(404)
         # TODO: If user already liked post, set liked to True
         self.render('show_post.html',
                     post=post,
@@ -258,11 +258,10 @@ class DeleteCommentHandler(Handler):
     def post(self, comment_id):
         comment = Comment.get_by_id(int(comment_id))
         post = comment.post
-        if not comment and comment.author == self.user:
-            self.error(404)
-        if Comment.delete_comment(comment_id):
-            # time.sleep(1) comment time.sleep in production
-            self.redirect('/{}'.format(post.key().id()))
+        if comment and comment.author == self.user:
+            if Comment.delete_comment(comment_id):
+                # time.sleep(1) comment time.sleep in production
+                self.redirect('/{}'.format(post.key().id()))
         else:
             self.error(404)
 
@@ -271,11 +270,21 @@ class DeletePostHandler(Handler):
     """Handle a post delete. Notice there is no get method."""
     def post(self, post_id):
         post = Post.get_by_id(int(post_id))
-        if not post and post.author == self.user:
+        if not post:
+            print "Post does not exist"
+            return self.error(404)
+        # post.author != self.user would not work
+        elif post and post.author.key().id() != self.user.key().id():
+            print("{0} is not {1}".format(post.author, self.user))
+            print "You don't own the post"
+            return self.error(404)
+        elif post and post.author.key().id() == self.user.key().id():
+            post.delete()
+            time.sleep(1)
+            self.redirect('/account')
+        else:
+            # Thrw error if there is something unusual.
             self.error(404)
-        post.delete()
-        time.sleep(1)
-        self.redirect('/account')
 
 
 class LikeHandler(Handler):
